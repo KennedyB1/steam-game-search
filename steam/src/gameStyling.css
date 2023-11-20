@@ -1,0 +1,55 @@
+.game-search-container {
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.game-search-input {
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.game-search-button,
+.game-item button {
+  padding: 5px 15px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.game-search-button:hover,
+.game-item button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.game-list {
+  list-style: none;
+  padding: 0;
+}
+
+.game-item {
+  background-color: #505050;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-item:hover {
+  background-color: #606060;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.game-item-content {
+  flex-grow: 1;
+  text-align: left;
+  color: #ffffff;
+}

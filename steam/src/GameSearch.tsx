@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
 import axios from 'axios';
+import './gameStyling.css'
 
 interface Game {
   appid: number;
@@ -10,7 +11,8 @@ const GameSearch: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [games, setGames] = useState<Game[]>([]);
 
-  const fetchGames = async () => {
+  const fetchGames = async (event: FormEvent) => {
+    event.preventDefault(); // Prevent the default form submission behavior
     if (!inputValue.trim()) {
       setGames([]);
       return;
@@ -28,8 +30,8 @@ const GameSearch: React.FC = () => {
     setInputValue(event.target.value);
   };
 
-  const logGameId = (appid: number) => {
-    console.log('Game ID:', appid);
+  const startSteamGame = (appid: number) => {
+    window.open(`steam://rungameid/${appid}`, '_blank');
   };
 
   const openGameUrl = (appid: number) => {
@@ -37,17 +39,28 @@ const GameSearch: React.FC = () => {
   };
 
   return (
-    <div>
-      <input type="text" value={inputValue} onChange={handleInputChange} />
-      <button onClick={fetchGames}>Search</button>
-      <ul>
-        {games.map(game => (
-          <li key={game.appid}>
-            {game.name}
-            <button onClick={() => logGameId(game.appid)}>Game</button>
-            <button onClick={() => openGameUrl(game.appid)}>Open URL</button>
-          </li>
-        ))}
+    <div className="game-search-container">
+      <form onSubmit={fetchGames}>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          className="game-search-input"
+        />
+        <button type="submit" className="game-search-button">Search</button>
+      </form>
+      <ul className="game-list">
+        {games
+          .filter(game => game.appid)
+          .map(game => (
+            <li key={game.appid} className="game-item">
+              <span>{game.name}</span>
+              <div>
+                <button onClick={() => startSteamGame(game.appid)}>Start Game</button>
+                <button onClick={() => openGameUrl(game.appid)}>Go to URL on Steam</button>
+              </div>
+            </li>
+          ))}
       </ul>
     </div>
   );
