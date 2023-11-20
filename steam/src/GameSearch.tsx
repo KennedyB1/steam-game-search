@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 interface Game {
@@ -9,9 +9,14 @@ interface Game {
 const GameSearch: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [games, setGames] = useState<Game[]>([]);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
       if (inputValue.trim()) {
         fetchGames(inputValue);
       } else {
@@ -19,7 +24,11 @@ const GameSearch: React.FC = () => {
       }
     }, 500); // 500 ms delay
 
-    return () => clearTimeout(delayDebounce);
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
   }, [inputValue]);
 
   const fetchGames = async (searchTerm: string) => {
