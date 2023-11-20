@@ -28,13 +28,25 @@ const GameSearch: React.FC = () => {
     setInputValue(event.target.value);
   };
 
+  const logGameId = (appid: number) => {
+    console.log('Game ID:', appid);
+  };
+
+  const openGameUrl = (appid: number) => {
+    window.open(`https://store.steampowered.com/app/${appid}`, '_blank');
+  };
+
   return (
     <div>
       <input type="text" value={inputValue} onChange={handleInputChange} />
       <button onClick={fetchGames}>Search</button>
       <ul>
         {games.map(game => (
-          <li key={game.appid}>{game.name}</li>
+          <li key={game.appid}>
+            {game.name}
+            <button onClick={() => logGameId(game.appid)}>Game</button>
+            <button onClick={() => openGameUrl(game.appid)}>Open URL</button>
+          </li>
         ))}
       </ul>
     </div>
