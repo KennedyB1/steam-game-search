@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 interface Game {
@@ -9,31 +9,15 @@ interface Game {
 const GameSearch: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [games, setGames] = useState<Game[]>([]);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
+  const fetchGames = async () => {
+    if (!inputValue.trim()) {
+      setGames([]);
+      return;
     }
 
-    debounceRef.current = setTimeout(() => {
-      if (inputValue.trim()) {
-        fetchGames(inputValue);
-      } else {
-        setGames([]);
-      }
-    }, 500); // 500 ms delay
-
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-    };
-  }, [inputValue]);
-
-  const fetchGames = async (searchTerm: string) => {
     try {
-      const response = await axios.get(`/api/steam?searchTerm=${encodeURIComponent(searchTerm)}`);
+      const response = await axios.get(`/api/steam?searchTerm=${encodeURIComponent(inputValue)}`);
       setGames(response.data.applist.apps);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -47,6 +31,7 @@ const GameSearch: React.FC = () => {
   return (
     <div>
       <input type="text" value={inputValue} onChange={handleInputChange} />
+      <button onClick={fetchGames}>Search</button>
       <ul>
         {games.map(game => (
           <li key={game.appid}>{game.name}</li>
