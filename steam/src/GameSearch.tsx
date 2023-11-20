@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 interface Game {
@@ -10,12 +10,19 @@ const GameSearch: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [games, setGames] = useState<Game[]>([]);
 
-  const fetchGames = async (searchTerm: string) => {
-    if (!searchTerm.trim()) {
-      setGames([]);
-      return;
-    }
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (inputValue.trim()) {
+        fetchGames(inputValue);
+      } else {
+        setGames([]);
+      }
+    }, 500); // 500 ms delay
 
+    return () => clearTimeout(delayDebounce);
+  }, [inputValue]);
+
+  const fetchGames = async (searchTerm: string) => {
     try {
       const response = await axios.get(`/api/steam?searchTerm=${encodeURIComponent(searchTerm)}`);
       setGames(response.data.applist.apps);
@@ -26,7 +33,6 @@ const GameSearch: React.FC = () => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
-    fetchGames(event.target.value);
   };
 
   return (
